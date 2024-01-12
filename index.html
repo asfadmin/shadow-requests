@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+  <head>
+      <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+  </head>
+  <body>
+    Pyodide test page <br>
+    Open your browser console to see Pyodide output
+
+    <link rel="stylesheet" href="https://pyscript.net/releases/2023.11.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2023.11.1/core.js"></script>
+
+    <py-config>
+        packages = ["nest-asyncio"]
+    </py-config>
+
+    <py-script>
+    print("Hello World")
+    import asyncio
+    from pyodide.http import pyfetch, FetchResponse
+
+    async def makeRequest():
+        res = await pyfetch('https://jsonplaceholder.typicode.com/todos/1', method="GET")
+        tmp = await res.json()
+        print("In Func", str(tmp))
+        return "aaaaaaaaaaaaa"
+
+    def async_to_sync(awaitable):
+        loop = asyncio.get_event_loop()
+        return loop.run_until_complete(awaitable)
+
+    #a = asyncio.ensure_future(makeRequest())
+
+    #loop = asyncio.new_event_loop()
+    #task = loop.create_task(makeRequest())
+    #loop.run_until_complete(task)
+    #a = task.result()
+    
+    a = async_to_sync(makeRequest())
+
+    print("After Func", a)
+
+    print("Goodbye World")
+    
+    </py-script>
+
+    <script type="text/javascript">
+      async function main(){
+        let pyodide = await loadPyodide();
+        console.log(pyodide.runPython(`
+            import sys
+            sys.version
+        `));
+        pyodide.runPython("print(1 + 2)");
+      }
+      main();
+    </script>
+  </body>
+</html>
